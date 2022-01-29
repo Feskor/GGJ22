@@ -114,26 +114,20 @@ public class LevelGenerator : MonoBehaviour
 
         if (turnLeftPlatform)
         {
-            GameObject boxColliderObject = new GameObject("TurnColliderObject");
-            boxColliderObject.transform.parent = previousPlatform.transform;
+            GameObject boxColliderObject = new GameObject("TurnLeftColliderObject");
             boxColliderObject.transform.position = prevPlatformCoord;
-            //boxColliderObject.transform.localPosition = new Vector3(previousPlatform.transform.position.x + platformSize * 0.5f,
-            //                                                        previousPlatform.transform.position.y,
-            //                                                        previousPlatform.transform.position.z + platformSize * 0.5f);
-            boxColliderObject.transform.rotation = Quaternion.Euler(transform.rotation.x, 45, transform.rotation.x);
+            boxColliderObject.transform.rotation = Quaternion.Euler(previousPlatform.transform.rotation.x, -45, previousPlatform.transform.rotation.x);
+            boxColliderObject.transform.parent = previousPlatform.transform;
             boxColliderObject.AddComponent<BoxCollider>().isTrigger = true;
-            boxColliderObject.GetComponent<BoxCollider>().size = new Vector3(1f, 5f, SquareRootOfPlatformSize());
+            boxColliderObject.GetComponent<BoxCollider>().size = new Vector3(SquareRootOfPlatformSize(), 5f, 1f);
             boxColliderObject.tag = "TurnLeftPlatform";
         }
         else if (turnRightPlatform)
         {
-            GameObject boxColliderObject = new GameObject("TurnColliderObject");
-            boxColliderObject.transform.parent = previousPlatform.transform;
+            GameObject boxColliderObject = new GameObject("TurnRightColliderObject");
             boxColliderObject.transform.position = prevPlatformCoord;
-            //boxColliderObject.transform.localPosition = new Vector3(previousPlatform.transform.position.x - platformSize * 0.5f,
-            //                                                        previousPlatform.transform.position.y,
-            //                                                        previousPlatform.transform.position.z + platformSize * 0.5f);
-            boxColliderObject.transform.rotation = Quaternion.Euler(transform.rotation.x, 45, transform.rotation.x);
+            boxColliderObject.transform.rotation = Quaternion.Euler(previousPlatform.transform.rotation.x, 45, previousPlatform.transform.rotation.x);
+            boxColliderObject.transform.parent = previousPlatform.transform;
             boxColliderObject.AddComponent<BoxCollider>().isTrigger = true;
             boxColliderObject.GetComponent<BoxCollider>().size = new Vector3(SquareRootOfPlatformSize(), 5f, 1f); 
             boxColliderObject.tag = "TurnRightPlatform";
@@ -168,7 +162,7 @@ public class LevelGenerator : MonoBehaviour
         if (platformUntilTurnCount >= STARTPLATFORMS)
         {
             // We can turn now
-            if (Random.Range(1, 11) == 1 && !platformSizeChanged) // 1 in 10 chance to turn
+            if (Random.Range(1, 3) == 1 && !platformSizeChanged) // 1 in 6 chance to turn
             {
                 if (zDirection) // Swapping to X direction
                 {
@@ -184,22 +178,24 @@ public class LevelGenerator : MonoBehaviour
                         goingNegative = false;
                         turnRightPlatform = true;
                     }
+                   
                     zDirection = false;
                 }
                 else // Swapping to Z direction
-                {
+                { 
                     if (Random.Range(1, 3) == 1) // Left turn (negative)
                     {
-                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
+                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
                         goingNegative = true;
                         turnLeftPlatform = true;
                     }
                     else // Right turn (positive)
                     {
-                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
+                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
                         goingNegative = false;
                         turnRightPlatform = true;
                     }
+                    
                     zDirection = true;
                 }
                 platformUntilTurnCount = 0;
