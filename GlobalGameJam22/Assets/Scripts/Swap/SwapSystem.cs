@@ -26,7 +26,7 @@ public class SwapSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerRen = player.GetComponent<MeshRenderer>();
+        playerRen = player.GetComponent<SkinnedMeshRenderer>();
 
         // Picks random color side to start game
         int sidePicker = Random.Range(0, 2);

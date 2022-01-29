@@ -7,6 +7,5 @@ public class FootStepsSound : MonoBehaviour
     private void Step()
     {
         AudioManager.Instance.HandlePlayerFootSteps();
-        Debug.Log("step");
     }
 }
