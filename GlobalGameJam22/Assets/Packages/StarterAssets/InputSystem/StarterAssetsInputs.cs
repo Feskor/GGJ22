@@ -1,6 +1,6 @@
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
-using UnityEngine.InputSystem;
+
 #endif
 
 namespace StarterAssets
@@ -12,6 +12,9 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		private float moveHorizontal;
+		public float maxAngle = 45f;
+		private float standardRot;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -22,38 +25,43 @@ namespace StarterAssets
 		public bool cursorInputForLook = true;
 #endif
 
-#if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
-		public void OnMove(InputValue value)
+		private void Start()
 		{
-			MoveInput(value.Get<Vector2>());
+			standardRot = transform.rotation.eulerAngles.y;
 		}
 
-		public void OnLook(InputValue value)
+		private void FixedUpdate()
 		{
-			if(cursorInputForLook)
+			if (Input.GetKey(KeyCode.A))
 			{
-				LookInput(value.Get<Vector2>());
+				moveHorizontal = -1;
+			}
+			else if (Input.GetKey(KeyCode.D))
+			{
+				moveHorizontal = 1;
+			}
+			else
+			{
+				moveHorizontal = 0;
 			}
 		}
 
-		public void OnJump(InputValue value)
+		// old input sys if we do decide to have it (most likely wont)...
+		private void Update()
 		{
-			JumpInput(value.isPressed);
-		}
+			MoveInput(new Vector2(moveHorizontal, 1));
 
-		public void OnSprint(InputValue value)
-		{
-			SprintInput(value.isPressed);
+			float MinY = standardRot - maxAngle;
+			float MaxY = standardRot + maxAngle;
+			Vector3 euler = transform.localEulerAngles;
+			euler.y = Mathf.Clamp(euler.y, MinY, MaxY);
+			transform.localEulerAngles = euler;
 		}
-#else
-	// old input sys if we do decide to have it (most likely wont)...
-#endif
-
 
 		public void MoveInput(Vector2 newMoveDirection)
 		{
 			move = newMoveDirection;
-		} 
+		}
 
 		public void LookInput(Vector2 newLookDirection)
 		{
@@ -85,5 +93,5 @@ namespace StarterAssets
 #endif
 
 	}
-	
+
 }
