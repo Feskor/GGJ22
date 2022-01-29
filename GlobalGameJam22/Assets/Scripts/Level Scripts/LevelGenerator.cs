@@ -171,11 +171,13 @@ public class LevelGenerator : MonoBehaviour
                     {
                         nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
                         goingNegative = true;
+                        turnLeftPlatform = true;
                     }
                     else // Right turn (positive)
                     {
                         nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
                         goingNegative = false;
+                        turnRightPlatform = true;
                     }
                     zDirection = true;
                 }

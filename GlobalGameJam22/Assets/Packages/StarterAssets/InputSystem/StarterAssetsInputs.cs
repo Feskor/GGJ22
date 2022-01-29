@@ -51,7 +51,7 @@ namespace StarterAssets
 		{
 			MoveInput(new Vector2(moveHorizontal, 1));
 
-			transform.rotation = new Quaternion(transform.rotation.x, standardRot, transform.rotation.z, transform.rotation.w);
+			transform.rotation = Quaternion.Euler(transform.rotation.x, standardRot, transform.rotation.x);//new Quaternion(transform.rotation.x, standardRot, transform.rotation.z, transform.rotation.w);
 		}
 
 		public void MoveInput(Vector2 newMoveDirection)

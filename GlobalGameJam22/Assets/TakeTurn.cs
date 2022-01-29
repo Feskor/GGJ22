@@ -10,12 +10,12 @@ public class TakeTurn : MonoBehaviour
     {
         if (collision.gameObject.tag == "TurnLeftPlatform")
         {
-            //GameManager.Instance.starterAssetsInputs.standardRot -= 90;
+            GameManager.Instance.starterAssetsInputs.standardRot -= 90;
             Debug.Log("hello?");
         }
         else if (collision.gameObject.tag == "TurnRightPlatform")
         {
-            //GameManager.Instance.starterAssetsInputs.standardRot += 90;
+            GameManager.Instance.starterAssetsInputs.standardRot += 90;
             Debug.Log("hello? right");
         }
     }
