@@ -97,5 +97,7 @@ public class LevelGenerator : MonoBehaviour
         platform.GetComponent<MeshFilter>().mesh.RecalculateNormals();
 
         currentPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
+
+        Destroy(platform, 5f);
     }
 }
