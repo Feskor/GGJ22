@@ -20,38 +20,44 @@ public class LevelGenerator : MonoBehaviour
 
     [Range(1f, 10f)]
     public int gameSpeed;
-
-    private int baseGameSpeed = 11;
+    private int baseGameSpeed = 10;
 
     public GameObject level;
-
+    private Queue<GameObject> platformsToRemove = new Queue<GameObject>();
     public Material platformMat;
 
-    private Vector3 currentPlatformCoord = Vector3.zero;
+    private Vector3 prevPlatformCoord = Vector3.zero, currentPlatformCoord = Vector3.zero, nextPlatformCoord = Vector3.zero;
+
     private const int STARTPLATFORMS = 10;
+    private int platformUntilTurnCount = 0;
+    private bool zDirection = true;
 
     private void Awake()
     {
         // spawn STARTPLATFORMS amount of platforms before the game starts
         for (int i = 0; i < STARTPLATFORMS; i++)
-        {
-            CreateMesh(currentPlatformCoord);
+        {            
+            if (i == 0)
+                CreateMesh(currentPlatformCoord, true);
+            else
+                CreateMesh(currentPlatformCoord);
         }
 
         // When done start Coroutine
-        StartCoroutine(GenerateLevel(gameSpeed));
+        StartCoroutine(GenerateLevel());
+        StartCoroutine(RemovePlatform());
     }
 
-    private IEnumerator GenerateLevel(int currentGameSpeed)
+    private IEnumerator GenerateLevel()
     {
         CreateMesh(currentPlatformCoord);
 
-        yield return new WaitForSeconds(baseGameSpeed - currentGameSpeed);
+        yield return new WaitForSeconds(baseGameSpeed - gameSpeed);
 
-        StartCoroutine(GenerateLevel(gameSpeed));
+        StartCoroutine(GenerateLevel());
     }
 
-    public void CreateMesh(Vector3 middlePoint)
+    public void CreateMesh(Vector3 middlePoint, bool firstPlatform = false)
     {
         Vector3 bottomLeftV = new Vector3(middlePoint.x - platformSize / 2f, middlePoint.y, middlePoint.z - platformSize / 2f);
         Vector3 bottomRightV = new Vector3(middlePoint.x + platformSize / 2f, middlePoint.y, middlePoint.z - platformSize / 2f);
@@ -96,8 +102,67 @@ public class LevelGenerator : MonoBehaviour
         platform.transform.parent = level.transform;
         platform.GetComponent<MeshFilter>().mesh.RecalculateNormals();
 
-        currentPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
+        if (platformUntilTurnCount < STARTPLATFORMS)
+            platformUntilTurnCount++;
 
-        Destroy(platform, 5f);
+        if (platformUntilTurnCount >= STARTPLATFORMS)
+        {
+            // We can turn now
+            if (Random.Range(1, 11) == 1) // 1 in 10 chance to turn
+            {
+                if (zDirection) // Swapping to X direction
+                {
+                    if (Random.Range(1, 3) == 1) // Left turn (negative)
+                    {
+                        nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
+                    }
+                    else // Right turn (positive)
+                    {
+                        nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
+                    }
+                    zDirection = false;
+                }
+                else // Swapping to Z direction
+                {
+                    if (Random.Range(1, 3) == 1) // Left turn (negative)
+                    {
+                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
+                    }
+                    else // Right turn (positive)
+                    {
+                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
+                    }
+                    zDirection = true;
+                }
+                platformUntilTurnCount = 0;
+            }
+            else
+                nextPlatformCoord = (currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord));
+        }
+        else // dont turn yet
+        {
+            if (firstPlatform)
+            {
+                prevPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
+                currentPlatformCoord = Vector3.zero;
+                nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
+            }
+            else
+                nextPlatformCoord = (currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord));
+        }
+
+        prevPlatformCoord = currentPlatformCoord;
+        currentPlatformCoord = nextPlatformCoord;
+
+        platformsToRemove.Enqueue(platform);
+    }
+
+    private IEnumerator RemovePlatform()
+    {
+        yield return new WaitForSeconds(baseGameSpeed - gameSpeed);
+
+        Destroy(platformsToRemove.Dequeue());
+
+        StartCoroutine(RemovePlatform());
     }
 }
