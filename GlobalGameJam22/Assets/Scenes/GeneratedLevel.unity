@@ -397,7 +397,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   platformSize: 10
-  gameSpeed: 8
+  gameSpeed: 5
   level: {fileID: 73298681}
   platformMat: {fileID: 2100000, guid: cfe1c772c12d50b42b1c7c23c9eec3a9, type: 2}
 --- !u!4 &1035428200
