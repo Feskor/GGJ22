@@ -5,7 +5,7 @@ using UnityEngine;
 public class SwapSystem : MonoBehaviour
 {
     [SerializeField] private KeyCode swapKey = KeyCode.E;
-    [SerializeField][Range(0.5f,2f)] float swapDelay = 1f;
+    [SerializeField] [Range(0.5f, 2f)] float swapDelay = 1f;
     private bool canSwap = true;
 
     [SerializeField] private Material transparent;
@@ -52,19 +52,25 @@ public class SwapSystem : MonoBehaviour
     {
         foreach (GameObject item in envList)
         {
-            item.layer = envLayer;
-            Renderer itemRen = item.GetComponent<MeshRenderer>();
-            itemRen.material = transparent;
-
-            if (playerRen.material.color == envColor)
+            foreach (Transform child in item.GetComponentsInChildren<Transform>())
             {
-                itemRen.material.color = envColor;
+                child.gameObject.layer = envLayer;
             }
-            else
+
+            foreach (MeshRenderer child in item.GetComponentsInChildren<MeshRenderer>())
             {
-                Color lowAlphaColor = envColor;
-                lowAlphaColor.a = alpha;
-                itemRen.material.color = lowAlphaColor;
+                child.material = transparent;
+
+                if (playerRen.material.color == envColor)
+                {
+                    child.material.color = envColor;
+                }
+                else
+                {
+                    Color lowAlphaColor = envColor;
+                    lowAlphaColor.a = alpha;
+                    child.material.color = lowAlphaColor;
+                }
             }
         }
     }
@@ -101,18 +107,25 @@ public class SwapSystem : MonoBehaviour
         // Reset alpha
         foreach (GameObject item in activeEnvList)
         {
-            item.GetComponent<MeshRenderer>().material.color = activeEnvColor;
+            foreach (MeshRenderer child in item.GetComponentsInChildren<MeshRenderer>())
+            {
+                child.material.color = activeEnvColor;
+            }
         }
+
+        Color lowAlphaColor = deactiveEnvColor;
+        lowAlphaColor.a = alpha;
 
         // Reduce alpha
         foreach (GameObject item in deactiveEnvList)
         {
-            Color lowAlphaColor = deactiveEnvColor;
-            lowAlphaColor.a = alpha;
-            item.GetComponent<MeshRenderer>().material.color = lowAlphaColor;
+            foreach (MeshRenderer child in item.GetComponentsInChildren<MeshRenderer>())
+            {
+                child.material.color = lowAlphaColor;
+            }
         }
     }
-
+    
     // Update is called once per frame
     void Update()
     {
