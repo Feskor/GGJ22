@@ -7,7 +7,7 @@ public class DamagePlayer : MonoBehaviour
 
     public int damageToTake = 1;
     bool invincible = false;
-    public GameObject gameManager;
+    private GameObject gameManager;
 
     private void Start()
     {

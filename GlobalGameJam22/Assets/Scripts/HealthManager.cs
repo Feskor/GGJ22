@@ -34,7 +34,9 @@ public class HealthManager : MonoBehaviour
     public void TakeDamage(int damage = 1)
     {
         if (damage <= 0) damage = 1;
-        //  TO-DO: Insert damage sounds
+
+        AudioManager.Instance.HandlePlayerHitSound();
+
         //  TO-DO: Add invincibility after being hit
         currentLives -= damage;
         hearts[currentLives].SetActive(false);

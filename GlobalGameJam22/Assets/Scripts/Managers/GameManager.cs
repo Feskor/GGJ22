@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using StarterAssets;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,4 +22,5 @@ public class GameManager : MonoBehaviour
     }
 
     public LevelGenerator levelGenerator;
+    public StarterAssetsInputs starterAssetsInputs;
 }
