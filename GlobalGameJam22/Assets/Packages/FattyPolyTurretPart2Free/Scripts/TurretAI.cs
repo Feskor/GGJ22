@@ -102,6 +102,7 @@ public class TurretAI : MonoBehaviour {
                 {
                     currentTarget = colls[i].gameObject;
                     distAway = dist;
+                    break;
                 }
             }
         }
