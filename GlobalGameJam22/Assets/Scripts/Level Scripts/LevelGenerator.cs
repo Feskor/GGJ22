@@ -114,18 +114,39 @@ public class LevelGenerator : MonoBehaviour
 
         if (turnLeftPlatform)
         {
-            previousPlatform.AddComponent<SphereCollider>().isTrigger = true;
-            previousPlatform.tag = "TurnLeftPlatform";
+            GameObject boxColliderObject = new GameObject("TurnColliderObject");
+            boxColliderObject.transform.parent = previousPlatform.transform;
+            boxColliderObject.transform.position = prevPlatformCoord;
+            //boxColliderObject.transform.localPosition = new Vector3(previousPlatform.transform.position.x + platformSize * 0.5f,
+            //                                                        previousPlatform.transform.position.y,
+            //                                                        previousPlatform.transform.position.z + platformSize * 0.5f);
+            boxColliderObject.transform.rotation = Quaternion.Euler(transform.rotation.x, 45, transform.rotation.x);
+            boxColliderObject.AddComponent<BoxCollider>().isTrigger = true;
+            boxColliderObject.GetComponent<BoxCollider>().size = new Vector3(1f, 5f, SquareRootOfPlatformSize());
+            boxColliderObject.tag = "TurnLeftPlatform";
         }
         else if (turnRightPlatform)
         {
-            previousPlatform.AddComponent<SphereCollider>().isTrigger = true;
-            previousPlatform.tag = "TurnRightPlatform";
+            GameObject boxColliderObject = new GameObject("TurnColliderObject");
+            boxColliderObject.transform.parent = previousPlatform.transform;
+            boxColliderObject.transform.position = prevPlatformCoord;
+            //boxColliderObject.transform.localPosition = new Vector3(previousPlatform.transform.position.x - platformSize * 0.5f,
+            //                                                        previousPlatform.transform.position.y,
+            //                                                        previousPlatform.transform.position.z + platformSize * 0.5f);
+            boxColliderObject.transform.rotation = Quaternion.Euler(transform.rotation.x, 45, transform.rotation.x);
+            boxColliderObject.AddComponent<BoxCollider>().isTrigger = true;
+            boxColliderObject.GetComponent<BoxCollider>().size = new Vector3(SquareRootOfPlatformSize(), 5f, 1f); 
+            boxColliderObject.tag = "TurnRightPlatform";
         }
 
         previousPlatform = platform;
 
         platformsToRemove.Enqueue(platform);
+    }
+
+    private float SquareRootOfPlatformSize()
+    {
+        return Mathf.Sqrt(platformSize * platformSize + platformSize * platformSize);
     }
 
     public void GetNewCoords(Vector3 middlePoint, bool firstPlatform = false)
