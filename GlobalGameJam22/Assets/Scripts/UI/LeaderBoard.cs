@@ -13,7 +13,6 @@ public class LeaderBoard : MonoBehaviour
         for(int i = 0; i < scores.Count; i++)
         {
             float score = PlayerPrefs.GetFloat("score " + i);
-            Debug.Log(score);
             leaderboardSpots[i].text = (i + 1) + ". je moeke " + score;
             scores[i] = score; 
         }
@@ -31,21 +30,16 @@ public class LeaderBoard : MonoBehaviour
         if (score < scores[scores.Count - 1])
             return;
 
-        Debug.Log(score);
-
         for (int i = 0; i < scores.Count; i++)
         {
-            Debug.Log("vrouw");
             if (score > scores[i])
             {            
-                Debug.Log(i + "i in enzo");
                 scores[i] = score;
                 leaderboardSpots[i].text = (i + 1) + "." + " je moeke " + scores[i];
                 PlayerPrefs.SetFloat("score " + i, score);
                 PlayerPrefs.Save();
                 break;
             }
-            Debug.Log("man");
         }
     }
 }

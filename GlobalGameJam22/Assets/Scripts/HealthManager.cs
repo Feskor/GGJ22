@@ -9,6 +9,7 @@ public class HealthManager : MonoBehaviour
     public GameObject gameOverScreen;
     public int maxLives = 3;
     public int currentLives;
+    public bool damage = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,12 +23,21 @@ public class HealthManager : MonoBehaviour
         {
             Heal();
         }
+
+        if (damage)
+        {
+            TakeDamage();
+            damage = false;
+        }
     }
 
     public void Die()
     {
         //  TO-DO: Play death sound
-        gameOverScreen.SetActive(true);
+        gameOverScreen.SetActive(true); 
+        GameManager.Instance.UIManager.SetActive(GameManager.Instance.UIManager.leaderBoard.gameObject);
+        GameManager.Instance.UIManager.Deactivate(GameManager.Instance.UIManager.score.gameObject);
+        GameManager.Instance.UIManager.leaderBoard.SetNewScore(GameManager.Instance.UIManager.score.score);
     }
 
     //  Method to take damage, hand in parameter if more than 1 damage
@@ -46,7 +56,7 @@ public class HealthManager : MonoBehaviour
             Die();
         }
     }
-    
+
     //  Method to heal the player, hand in parameter if healing more than 1 live
     public void Heal(int amount = 1)
     {
@@ -54,12 +64,13 @@ public class HealthManager : MonoBehaviour
 
         currentLives += amount;
 
-        if(currentLives > maxLives)
+        if (currentLives > maxLives)
         {
             currentLives = maxLives;
         }
         hearts[currentLives - 1].SetActive(true);
     }
+
 
     //  Method to increase max lives of the player, hand in parameter if increasing by more than 1
     //public void IncreaseMaxHealth(int amount = 1)
@@ -68,6 +79,6 @@ public class HealthManager : MonoBehaviour
 
     //    maxLives += amount;
     //    currentLives += amount;
-        
+
     //}
 }
