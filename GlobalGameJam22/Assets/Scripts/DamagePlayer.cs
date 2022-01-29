@@ -5,28 +5,20 @@ using UnityEngine;
 public class DamagePlayer : MonoBehaviour
 {
 
-    public int damageToGive;
+    public int damageToTake = 1;
     bool invincible = false;
-    public GameObject gameController;
+    public GameObject gameManager;
 
     private void Start()
     {
-        gameController = GameObject.Find("GameController");
+        gameManager = GameObject.Find("GameManager");
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "Player" && !invincible)
+        if (other.gameObject.layer == 8)
         {
-            gameController.GetComponent<HealthManager>().TakeDamage(damageToGive);
-            invincible = true;
-            Invoke("setBool", 0.3f);
+            gameManager.GetComponent<HealthManager>().TakeDamage(damageToTake);
         }
     }
-
-    void setBool()
-    {
-        invincible = false;
-    }
-
 }

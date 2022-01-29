@@ -5,12 +5,10 @@ using UnityEngine;
 public class HealthManager : MonoBehaviour
 {
 
-    public GameObject lives;
     public GameObject[] hearts;
     public GameObject gameOverScreen;
     public int maxLives = 3;
     public int currentLives;
-    bool invincible = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -35,7 +33,6 @@ public class HealthManager : MonoBehaviour
     //  Method to take damage, hand in parameter if more than 1 damage
     public void TakeDamage(int damage = 1)
     {
-        Debug.Log("oof");
         if (damage <= 0) damage = 1;
         //  TO-DO: Insert damage sounds
         //  TO-DO: Add invincibility after being hit
@@ -51,7 +48,6 @@ public class HealthManager : MonoBehaviour
     //  Method to heal the player, hand in parameter if healing more than 1 live
     public void Heal(int amount = 1)
     {
-        Debug.Log("heal!");
         if (amount <= 0) amount = 1;
 
         currentLives += amount;
