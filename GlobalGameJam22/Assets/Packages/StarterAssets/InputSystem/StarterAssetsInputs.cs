@@ -1,6 +1,6 @@
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
-
+using UnityEngine.InputSystem;
 #endif
 
 namespace StarterAssets
@@ -27,7 +27,7 @@ namespace StarterAssets
 
 		private void Start()
 		{
-			standardRot = transform.rotation.eulerAngles.y;
+			standardRot = transform.rotation.y;
 		}
 
 		private void FixedUpdate()
@@ -46,16 +46,12 @@ namespace StarterAssets
 			}
 		}
 
-		// old input sys if we do decide to have it (most likely wont)...
+		
 		private void Update()
 		{
 			MoveInput(new Vector2(moveHorizontal, 1));
 
-			float MinY = standardRot - maxAngle;
-			float MaxY = standardRot + maxAngle;
-			Vector3 euler = transform.localEulerAngles;
-			euler.y = Mathf.Clamp(euler.y, MinY, MaxY);
-			transform.localEulerAngles = euler;
+			transform.rotation = new Quaternion(transform.rotation.x, standardRot, transform.rotation.z, transform.rotation.w);
 		}
 
 		public void MoveInput(Vector2 newMoveDirection)
