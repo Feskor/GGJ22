@@ -29,7 +29,11 @@ public class AudioManager : MonoBehaviour
 		PlayerHitAhh,
 		PlayerHitOof,
 		BackGroundMusic,
-		WalkingSound		
+		FootStep1,
+		FootStep2,
+		FootStep3,
+		FootStep4,
+		FootStep5
 	};
 
 	private void Awake()
@@ -115,6 +119,34 @@ public class AudioManager : MonoBehaviour
 		Debug.Log(index);
 
 		return (clips)index;
+	}
+
+	public void HandlePlayerFootSteps()
+    {
+		// cahnge to player object
+		player = GameObject.Find("Player");
+
+		GameObject audioSource = GetPooledAudioSourceObject();
+		audioSource.transform.localPosition = player.transform.position;
+		audioSource.SetActive(true);
+
+		Play(GetRandomFootStepClip(), audioSource.GetComponent<AudioSource>());
+	}
+
+	private clips GetRandomFootStepClip()
+	{
+		int index = Random.Range(4, 9);
+
+        foreach (Transform audioSource in transform)
+        {
+            while (audioSource.GetComponent<AudioSource>().isPlaying &&
+                   audioSource.GetComponent<AudioSource>().clip.name == ((clips)index).ToString())
+            {
+                index = Random.Range(4, 9);
+            }
+        }
+
+        return (clips)index;
 	}
 
 	/// <summary>
