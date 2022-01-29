@@ -32,4 +32,8 @@ public class HighScore : MonoBehaviour
         }
     
     }
+
+    public void AddScore(int bonus){
+        score += bonus;
+    }
 }

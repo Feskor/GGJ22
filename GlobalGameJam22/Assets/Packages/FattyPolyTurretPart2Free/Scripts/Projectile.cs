@@ -104,11 +104,11 @@ public class Projectile : MonoBehaviour {
     {
         if (other.transform.tag == "Player")
         {
-            Vector3 dir = other.transform.position - transform.position;
-            //Vector3 knockBackPos = other.transform.position * (-dir.normalized * knockBack);
-            Vector3 knockBackPos = other.transform.position + (dir.normalized * knockBack);
-            knockBackPos.y = 1;
-            other.transform.position = knockBackPos;
+            // Vector3 dir = other.transform.position - transform.position;
+            // //Vector3 knockBackPos = other.transform.position * (-dir.normalized * knockBack);
+            // Vector3 knockBackPos = other.transform.position + (dir.normalized * knockBack);
+            // knockBackPos.y = 1;
+            // other.transform.position = knockBackPos;
             Explosion();
         }
     }
