@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace StarterAssets
 {
-    public class UICanvasControllerInput : MonoBehaviour
+    /*public class UICanvasControllerInput : MonoBehaviour
     {
 
         [Header("Output")]
@@ -28,6 +28,6 @@ namespace StarterAssets
             starterAssetsInputs.SprintInput(virtualSprintState);
         }
         
-    }
+    }*/
 
 }
