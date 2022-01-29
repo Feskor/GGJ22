@@ -570,6 +570,36 @@ MonoBehaviour:
   gameOverScreen: {fileID: 1714056676}
   maxLives: 3
   currentLives: 0
+--- !u!1 &1888340435 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4863273069157155723, guid: f4f782ddeb89da14d95068cfe5bde488, type: 3}
+  m_PrefabInstance: {fileID: 4863273067929326941}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1888340437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888340435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2e2e186e2970bc418e770554c83155d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1888340438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888340435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 113c2ce35685f794d81a8f61237a0c69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageToTake: 1
 --- !u!1001 &2016948742636616846
 PrefabInstance:
   m_ObjectHideFlags: 0

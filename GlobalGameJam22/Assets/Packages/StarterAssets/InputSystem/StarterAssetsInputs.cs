@@ -14,7 +14,7 @@ namespace StarterAssets
 		public bool sprint;
 		private float moveHorizontal;
 		public float maxAngle = 45f;
-		private float standardRot;
+		public float standardRot;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;

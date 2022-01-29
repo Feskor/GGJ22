@@ -16,12 +16,13 @@ public class LevelGenerator : MonoBehaviour
     public GameObject level;
     private Queue<GameObject> platformsToRemove = new Queue<GameObject>();
     public Material platformMat;
+    private GameObject previousPlatform;
 
     private Vector3 prevPlatformCoord = Vector3.zero, currentPlatformCoord = Vector3.zero, nextPlatformCoord = Vector3.zero;
 
     private const int STARTPLATFORMS = 10;
     private int platformUntilTurnCount = 0;
-    private bool zDirection = true, platformSizeChanged = false, goingNegative = false;
+    private bool zDirection = true, platformSizeChanged = false, goingNegative = false, turnLeftPlatform = false, turnRightPlatform = false;
 
     private void Awake()
     {
@@ -48,6 +49,8 @@ public class LevelGenerator : MonoBehaviour
         CreateMesh(currentPlatformCoord);
 
         yield return new WaitForSeconds(maxGameSpeed - gameSpeed);
+
+        turnLeftPlatform = turnRightPlatform = false;
 
         GetNewCoords(currentPlatformCoord);
 
@@ -107,7 +110,20 @@ public class LevelGenerator : MonoBehaviour
         platform.GetComponent<MeshRenderer>().material = platformMat;
         platform.AddComponent<BoxCollider>();
         platform.transform.parent = level.transform;
-        platform.GetComponent<MeshFilter>().mesh.RecalculateNormals();     
+        platform.GetComponent<MeshFilter>().mesh.RecalculateNormals();
+
+        if (turnLeftPlatform)
+        {
+            previousPlatform.AddComponent<SphereCollider>().isTrigger = true;
+            previousPlatform.tag = "TurnLeftPlatform";
+        }
+        else if (turnRightPlatform)
+        {
+            previousPlatform.AddComponent<SphereCollider>().isTrigger = true;
+            previousPlatform.tag = "TurnRightPlatform";
+        }
+
+        previousPlatform = platform;
 
         platformsToRemove.Enqueue(platform);
     }
@@ -139,11 +155,13 @@ public class LevelGenerator : MonoBehaviour
                     {
                         nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
                         goingNegative = true;
+                        turnLeftPlatform = true;
                     }
                     else // Right turn (positive)
                     {
                         nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
                         goingNegative = false;
+                        turnRightPlatform = true;
                     }
                     zDirection = false;
                 }
