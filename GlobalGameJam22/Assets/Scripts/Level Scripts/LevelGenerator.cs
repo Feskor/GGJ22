@@ -4,8 +4,19 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
+    [SerializeField]
     [Range(10f, 50f)]
-    public float platformSize;
+    private float platformSize;
+    public float PlatformSize
+    {
+        get { return platformSize; }
+        set 
+        { 
+            // Do some kind of check to make sure that the change in size still let's the player continue
+            // Connection check OR distance check with old and new platform size
+            platformSize = value;
+        }
+    }
 
     [Range(1f, 10f)]
     public int gameSpeed;
