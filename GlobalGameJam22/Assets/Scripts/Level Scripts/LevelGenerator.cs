@@ -11,7 +11,7 @@ public class LevelGenerator : MonoBehaviour
 
     private float maxGameSpeed = 10;
     [Range(1f, 10f)]
-    public float gameSpeed;    
+    public float gameSpeed;
 
     public GameObject level;
     private Queue<GameObject> platformsToRemove = new Queue<GameObject>();
@@ -20,12 +20,16 @@ public class LevelGenerator : MonoBehaviour
 
     private Vector3 prevPlatformCoord = Vector3.zero, currentPlatformCoord = Vector3.zero, nextPlatformCoord = Vector3.zero;
 
-    private const int STARTPLATFORMS = 10;
+    private const int STARTPLATFORMS = 8;
     private int platformUntilTurnCount = 0;
     private bool zDirection = true, platformSizeChanged = false, goingNegative = false, turnLeftPlatform = false, turnRightPlatform = false;
 
+    private SwapSystem swapSystem;
+
     private void Awake()
     {
+        swapSystem = FindObjectOfType<SwapSystem>();
+
         prevPlatformSize = platformSize;
 
         // spawn STARTPLATFORMS amount of platforms before the game starts
@@ -36,7 +40,10 @@ public class LevelGenerator : MonoBehaviour
             if (i == 0)
                 GetNewCoords(currentPlatformCoord, true);
             else
+            {
                 GetNewCoords(currentPlatformCoord);
+                swapSystem.SetObjectsLocation(currentPlatformCoord);
+            }
         }
 
         // When done start Coroutine
@@ -47,6 +54,8 @@ public class LevelGenerator : MonoBehaviour
     private IEnumerator GenerateLevel()
     {
         CreateMesh(currentPlatformCoord);
+
+        swapSystem.SetObjectsLocation(currentPlatformCoord);
 
         yield return new WaitForSeconds(maxGameSpeed - gameSpeed);
 
@@ -139,66 +148,66 @@ public class LevelGenerator : MonoBehaviour
 
             // any value different than the base 10 needs a change
             // (new number - 10 (base number)) / 2 = -z value
-        }            
+        }
 
         if (platformUntilTurnCount < STARTPLATFORMS)
             platformUntilTurnCount++;
 
-        if (platformUntilTurnCount >= STARTPLATFORMS)
-        {
-            // We can turn now
-            if (Random.Range(1, 11) == 1 && !platformSizeChanged) // 1 in 10 chance to turn
-            {
-                if (zDirection) // Swapping to X direction
-                {
-                    if (Random.Range(1, 3) == 1) // Left turn (negative)
-                    {
-                        nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
-                        goingNegative = true;
-                        turnLeftPlatform = true;
-                    }
-                    else // Right turn (positive)
-                    {
-                        nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
-                        goingNegative = false;
-                        turnRightPlatform = true;
-                    }
-                    zDirection = false;
-                }
-                else // Swapping to Z direction
-                {
-                    if (Random.Range(1, 3) == 1) // Left turn (negative)
-                    {
-                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
-                        goingNegative = true;
-                    }
-                    else // Right turn (positive)
-                    {
-                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
-                        goingNegative = false;
-                    }
-                    zDirection = true;
-                }
-                platformUntilTurnCount = 0;
-            }
-            else if (platformSizeChanged)
-            {
-                if (zDirection && goingNegative) // moving z-axis to negative
-                    nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
-                else if (zDirection && !goingNegative)
-                    nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
-                else if (!zDirection && goingNegative)
-                    nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
-                else if (!zDirection && !goingNegative)
-                    nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
+        // if (platformUntilTurnCount >= STARTPLATFORMS)
+        // {
+        //     // We can turn now
+        //     if (Random.Range(1, 11) == 1 && !platformSizeChanged) // 1 in 10 chance to turn
+        //     {
+        //         if (zDirection) // Swapping to X direction
+        //         {
+        //             if (Random.Range(1, 3) == 1) // Left turn (negative)
+        //             {
+        //                 nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
+        //                 goingNegative = true;
+        //                 turnLeftPlatform = true;
+        //             }
+        //             else // Right turn (positive)
+        //             {
+        //                 nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
+        //                 goingNegative = false;
+        //                 turnRightPlatform = true;
+        //             }
+        //             zDirection = false;
+        //         }
+        //         else // Swapping to Z direction
+        //         {
+        //             if (Random.Range(1, 3) == 1) // Left turn (negative)
+        //             {
+        //                 nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
+        //                 goingNegative = true;
+        //             }
+        //             else // Right turn (positive)
+        //             {
+        //                 nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
+        //                 goingNegative = false;
+        //             }
+        //             zDirection = true;
+        //         }
+        //         platformUntilTurnCount = 0;
+        //     }
+        //     else if (platformSizeChanged)
+        //     {
+        //         if (zDirection && goingNegative) // moving z-axis to negative
+        //             nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
+        //         else if (zDirection && !goingNegative)
+        //             nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
+        //         else if (!zDirection && goingNegative)
+        //             nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
+        //         else if (!zDirection && !goingNegative)
+        //             nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
 
-                platformSizeChanged = false;
-            }
-            else
-                nextPlatformCoord = currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord);
-        }
-        else // dont turn yet
-        {
+        //         platformSizeChanged = false;
+        //     }
+        //     else
+        //         nextPlatformCoord = currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord);
+        // }
+        // else // dont turn yet
+        // {
             if (firstPlatform)
             {
                 prevPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
@@ -220,7 +229,7 @@ public class LevelGenerator : MonoBehaviour
             }
             else
                 nextPlatformCoord = currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord);
-        }
+        // }
 
         prevPlatformCoord = currentPlatformCoord;
         currentPlatformCoord = nextPlatformCoord;
