@@ -7,7 +7,7 @@ public class HighScore : MonoBehaviour
 {
     public TextMeshProUGUI scoreDisplay;
     public float scoreMultiplayer = 1;
-    private float score;
+    public float score;
     private float time;
     private int collectables;
     [SerializeField] private int collectValue = 50;

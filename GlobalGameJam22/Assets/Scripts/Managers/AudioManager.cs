@@ -116,8 +116,6 @@ public class AudioManager : MonoBehaviour
             }
         }
 
-		Debug.Log(index);
-
 		return (clips)index;
 	}
 

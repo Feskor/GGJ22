@@ -19,7 +19,6 @@ public class DamagePlayer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("doe iets");
         if (falling)
         {
             StartCoroutine(DamageTrigger());
