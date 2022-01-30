@@ -17,4 +17,8 @@ public class HighScore : MonoBehaviour
             score = Mathf.Ceil(time) * scoreMultiplayer;
             scoreDisplay.text = "Score: " + score;
     }
+
+    public void AddScore(int bonus){
+        score += bonus;
+    }
 }
