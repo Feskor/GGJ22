@@ -9,6 +9,8 @@ public class HighScore : MonoBehaviour
     public float scoreMultiplayer = 1;
     private float score;
     private float time;
+    private int collectables;
+    [SerializeField] private int collectValue = 50;
     public LeaderBoard leaderbord;
 
     //for testing
@@ -19,7 +21,7 @@ public class HighScore : MonoBehaviour
         if (!dead)
         {
             time += Time.deltaTime;
-            score = Mathf.Ceil(time) * scoreMultiplayer;
+            score = Mathf.Ceil(time) * scoreMultiplayer + (collectables * collectValue);
             scoreDisplay.text = "Score: " + score;
         }
 
@@ -28,12 +30,12 @@ public class HighScore : MonoBehaviour
         {
             dead = false;
             leaderbord.SetNewScore(score);
-           
         }
-    
+
     }
 
-    public void AddScore(int bonus){
-        score += bonus;
+    public void AddScore()
+    {
+        collectables++;
     }
 }

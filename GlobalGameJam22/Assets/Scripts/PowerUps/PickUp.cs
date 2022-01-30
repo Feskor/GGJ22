@@ -11,7 +11,7 @@ public class PickUp : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            other.gameObject.GetComponent<PowerUp>().Activate((int)pickups);
+            other.gameObject.GetComponentInChildren<PowerUp>().Activate((int)pickups);
             Destroy(gameObject);
         }
     }
