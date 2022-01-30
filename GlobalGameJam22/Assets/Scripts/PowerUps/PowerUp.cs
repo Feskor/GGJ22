@@ -4,11 +4,11 @@ public class PowerUp : MonoBehaviour
 {
     private HealthManager hm;
     private HighScore hs;
-
-    [SerializeField] private int bonusScore = 200;
+    
     void Start()
     {
         hm = GameObject.FindObjectOfType<HealthManager>();
+        hs = GameObject.FindObjectOfType<HighScore>();
     }
 
     public void Activate(int pickUp)
@@ -16,7 +16,7 @@ public class PowerUp : MonoBehaviour
         switch (pickUp)
         {
             case 0:// Collectables
-                hs.AddScore(bonusScore);
+                hs.AddScore();
                 break;
             case 1:// Health
                 hm.Heal();
