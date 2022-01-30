@@ -8,9 +8,9 @@ public class TakeTurn : MonoBehaviour
     private void OnTriggerEnter(Collider collision)
     {
         if (collision.gameObject.tag == "TurnLeftPlatform")         
-            GameManager.Instance.starterAssetsInputs.standardRot = ChangeQuaternion(GameManager.Instance.starterAssetsInputs.standardRot, true,);
+            GameManager.Instance.starterAssetsInputs.standardRot = ChangeQuaternion(GameManager.Instance.starterAssetsInputs.standardRot, true);
         else if (collision.gameObject.tag == "TurnRightPlatform")
-            GameManager.Instance.starterAssetsInputs.standardRot = ChangeQuaternion(GameManager.Instance.starterAssetsInputs.standardRot, false,);   
+            GameManager.Instance.starterAssetsInputs.standardRot = ChangeQuaternion(GameManager.Instance.starterAssetsInputs.standardRot, false);   
     }
 
     private float ChangeQuaternion(float standardRot, bool left)
@@ -23,9 +23,9 @@ public class TakeTurn : MonoBehaviour
             newRot = 90;
         else if (standardRot == 90 && left || standardRot == 270 && !left)
             newRot = 0;
-        else if (standardRot == 270 && !left || standardRot == 90 && left)
+        else if (standardRot == 270 && left || standardRot == 90 && !left)
             newRot = 180;
-        
+        Debug.Log(standardRot + " standarRot " + newRot + " newRot " + left + " left");
         return newRot;
     }
 }

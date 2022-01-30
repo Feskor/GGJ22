@@ -10,10 +10,20 @@ public class DamagePlayer : MonoBehaviour
     [SerializeField] [Range(1, 10)] int cooldown = 2;
     private bool invulnerable = false;
     private GameObject gameManager;
+    public bool falling = false;
 
     private void Start()
     {
         gameManager = GameObject.Find("GameManager");
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("doe iets");
+        if (falling)
+        {
+            StartCoroutine(DamageTrigger());
+        }
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)

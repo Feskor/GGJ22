@@ -11,7 +11,9 @@ public class LevelGenerator : MonoBehaviour
 
     private float maxGameSpeed = 10;
     [Range(1f, 10f)]
-    public float gameSpeed;    
+    public float removeGameSpeed;
+    public float addGameSpeed;
+    private int Count = 0;
 
     public GameObject level;
     private Queue<GameObject> platformsToRemove = new Queue<GameObject>();
@@ -48,7 +50,7 @@ public class LevelGenerator : MonoBehaviour
     {
         CreateMesh(currentPlatformCoord);
 
-        yield return new WaitForSeconds(maxGameSpeed - gameSpeed);
+        yield return new WaitForSeconds(maxGameSpeed - addGameSpeed);
 
         turnLeftPlatform = turnRightPlatform = false;
 
@@ -159,8 +161,9 @@ public class LevelGenerator : MonoBehaviour
         if (platformUntilTurnCount < STARTPLATFORMS)
             platformUntilTurnCount++;
 
-        if (platformUntilTurnCount >= STARTPLATFORMS)
+      /*  if (platformUntilTurnCount >= STARTPLATFORMS)
         {
+            Count++;
             // We can turn now
             if (Random.Range(1, 3) == 1 && !platformSizeChanged) // 1 in 6 chance to turn
             {
@@ -171,29 +174,34 @@ public class LevelGenerator : MonoBehaviour
                         nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
                         goingNegative = true;
                         turnLeftPlatform = true;
+                        Debug.Log("z left" + Count + " trunleft "+  turnLeftPlatform + " turnright" + turnRightPlatform);
                     }
                     else // Right turn (positive)
                     {
                         nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
                         goingNegative = false;
                         turnRightPlatform = true;
+                        Debug.Log("z right" + Count + " trunleft " + turnLeftPlatform + " turnright" + turnRightPlatform);
                     }
                    
                     zDirection = false;
                 }
                 else // Swapping to Z direction
                 { 
+                    //hier werkt iets niet het is niet de plus en min om draaien
                     if (Random.Range(1, 3) == 1) // Left turn (negative)
                     {
                         nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
                         goingNegative = true;
                         turnLeftPlatform = true;
+                        Debug.Log("not z left" + Count + " trunleft " + turnLeftPlatform + " turnright" + turnRightPlatform);
                     }
                     else // Right turn (positive)
                     {
                         nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
                         goingNegative = false;
                         turnRightPlatform = true;
+                        Debug.Log("not z right" + Count  + " trunleft "+  turnLeftPlatform + " turnright" + turnRightPlatform);
                     }
                     
                     zDirection = true;
@@ -215,9 +223,9 @@ public class LevelGenerator : MonoBehaviour
             }
             else
                 nextPlatformCoord = currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord);
-        }
-        else // dont turn yet
-        {
+        }*/
+       /* if // dont turn yet
+        {*/
             if (firstPlatform)
             {
                 prevPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
@@ -239,7 +247,7 @@ public class LevelGenerator : MonoBehaviour
             }
             else
                 nextPlatformCoord = currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord);
-        }
+      //  }
 
         prevPlatformCoord = currentPlatformCoord;
         currentPlatformCoord = nextPlatformCoord;
@@ -247,7 +255,7 @@ public class LevelGenerator : MonoBehaviour
 
     private IEnumerator RemovePlatform()
     {
-        yield return new WaitForSeconds(maxGameSpeed - gameSpeed);
+        yield return new WaitForSeconds(maxGameSpeed - removeGameSpeed);
 
         Destroy(platformsToRemove.Dequeue());
 
