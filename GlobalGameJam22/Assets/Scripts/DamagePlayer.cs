@@ -6,8 +6,11 @@ public class DamagePlayer : MonoBehaviour
 {
 
     public int damageToTake = 1;
-    bool invincible = false;
+
+    [SerializeField] [Range(1, 10)] int cooldown = 2;
+    private bool invulnerable = false;
     private GameObject gameManager;
+    public bool falling = false;
 
     private void Start()
     {
@@ -16,9 +19,26 @@ public class DamagePlayer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == 8)
+        Debug.Log("doe iets");
+        if (falling)
         {
-            gameManager.GetComponent<HealthManager>().TakeDamage(damageToTake);
+            StartCoroutine(DamageTrigger());
         }
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.gameObject.layer == 6 && !invulnerable || hit.gameObject.layer == 7 && !invulnerable)
+        {
+            invulnerable = !invulnerable;
+            StartCoroutine(DamageTrigger());
+        }
+    }
+
+    IEnumerator DamageTrigger()
+    {
+        gameManager.GetComponentInChildren<HealthManager>().TakeDamage(damageToTake);
+        yield return new WaitForSeconds(cooldown);
+        invulnerable = !invulnerable;
     }
 }

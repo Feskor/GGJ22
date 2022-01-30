@@ -11,7 +11,9 @@ public class LevelGenerator : MonoBehaviour
 
     private float maxGameSpeed = 10;
     [Range(1f, 10f)]
-    public float gameSpeed;    
+    public float removeGameSpeed;
+    public float addGameSpeed;
+    private int Count = 0;
 
     public GameObject level;
     private Queue<GameObject> platformsToRemove = new Queue<GameObject>();
@@ -48,7 +50,7 @@ public class LevelGenerator : MonoBehaviour
     {
         CreateMesh(currentPlatformCoord);
 
-        yield return new WaitForSeconds(maxGameSpeed - gameSpeed);
+        yield return new WaitForSeconds(maxGameSpeed - addGameSpeed);
 
         turnLeftPlatform = turnRightPlatform = false;
 
@@ -114,18 +116,33 @@ public class LevelGenerator : MonoBehaviour
 
         if (turnLeftPlatform)
         {
-            previousPlatform.AddComponent<SphereCollider>().isTrigger = true;
-            previousPlatform.tag = "TurnLeftPlatform";
+            GameObject boxColliderObject = new GameObject("TurnLeftColliderObject");
+            boxColliderObject.transform.position = prevPlatformCoord;
+            boxColliderObject.transform.rotation = Quaternion.Euler(previousPlatform.transform.rotation.x, -45, previousPlatform.transform.rotation.x);
+            boxColliderObject.transform.parent = previousPlatform.transform;
+            boxColliderObject.AddComponent<BoxCollider>().isTrigger = true;
+            boxColliderObject.GetComponent<BoxCollider>().size = new Vector3(SquareRootOfPlatformSize(), 5f, 1f);
+            boxColliderObject.tag = "TurnLeftPlatform";
         }
         else if (turnRightPlatform)
         {
-            previousPlatform.AddComponent<SphereCollider>().isTrigger = true;
-            previousPlatform.tag = "TurnRightPlatform";
+            GameObject boxColliderObject = new GameObject("TurnRightColliderObject");
+            boxColliderObject.transform.position = prevPlatformCoord;
+            boxColliderObject.transform.rotation = Quaternion.Euler(previousPlatform.transform.rotation.x, 45, previousPlatform.transform.rotation.x);
+            boxColliderObject.transform.parent = previousPlatform.transform;
+            boxColliderObject.AddComponent<BoxCollider>().isTrigger = true;
+            boxColliderObject.GetComponent<BoxCollider>().size = new Vector3(SquareRootOfPlatformSize(), 5f, 1f); 
+            boxColliderObject.tag = "TurnRightPlatform";
         }
 
         previousPlatform = platform;
 
         platformsToRemove.Enqueue(platform);
+    }
+
+    private float SquareRootOfPlatformSize()
+    {
+        return Mathf.Sqrt(platformSize * platformSize + platformSize * platformSize);
     }
 
     public void GetNewCoords(Vector3 middlePoint, bool firstPlatform = false)
@@ -144,10 +161,11 @@ public class LevelGenerator : MonoBehaviour
         if (platformUntilTurnCount < STARTPLATFORMS)
             platformUntilTurnCount++;
 
-        if (platformUntilTurnCount >= STARTPLATFORMS)
+      /*  if (platformUntilTurnCount >= STARTPLATFORMS)
         {
+            Count++;
             // We can turn now
-            if (Random.Range(1, 11) == 1 && !platformSizeChanged) // 1 in 10 chance to turn
+            if (Random.Range(1, 3) == 1 && !platformSizeChanged) // 1 in 6 chance to turn
             {
                 if (zDirection) // Swapping to X direction
                 {
@@ -156,27 +174,36 @@ public class LevelGenerator : MonoBehaviour
                         nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
                         goingNegative = true;
                         turnLeftPlatform = true;
+                        Debug.Log("z left" + Count + " trunleft "+  turnLeftPlatform + " turnright" + turnRightPlatform);
                     }
                     else // Right turn (positive)
                     {
                         nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
                         goingNegative = false;
                         turnRightPlatform = true;
+                        Debug.Log("z right" + Count + " trunleft " + turnLeftPlatform + " turnright" + turnRightPlatform);
                     }
+                   
                     zDirection = false;
                 }
                 else // Swapping to Z direction
-                {
+                { 
+                    //hier werkt iets niet het is niet de plus en min om draaien
                     if (Random.Range(1, 3) == 1) // Left turn (negative)
                     {
-                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
+                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
                         goingNegative = true;
+                        turnLeftPlatform = true;
+                        Debug.Log("not z left" + Count + " trunleft " + turnLeftPlatform + " turnright" + turnRightPlatform);
                     }
                     else // Right turn (positive)
                     {
-                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
+                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
                         goingNegative = false;
+                        turnRightPlatform = true;
+                        Debug.Log("not z right" + Count  + " trunleft "+  turnLeftPlatform + " turnright" + turnRightPlatform);
                     }
+                    
                     zDirection = true;
                 }
                 platformUntilTurnCount = 0;
@@ -196,9 +223,9 @@ public class LevelGenerator : MonoBehaviour
             }
             else
                 nextPlatformCoord = currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord);
-        }
-        else // dont turn yet
-        {
+        }*/
+       /* if // dont turn yet
+        {*/
             if (firstPlatform)
             {
                 prevPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
@@ -220,7 +247,7 @@ public class LevelGenerator : MonoBehaviour
             }
             else
                 nextPlatformCoord = currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord);
-        }
+      //  }
 
         prevPlatformCoord = currentPlatformCoord;
         currentPlatformCoord = nextPlatformCoord;
@@ -228,7 +255,7 @@ public class LevelGenerator : MonoBehaviour
 
     private IEnumerator RemovePlatform()
     {
-        yield return new WaitForSeconds(maxGameSpeed - gameSpeed);
+        yield return new WaitForSeconds(maxGameSpeed - removeGameSpeed);
 
         Destroy(platformsToRemove.Dequeue());
 
