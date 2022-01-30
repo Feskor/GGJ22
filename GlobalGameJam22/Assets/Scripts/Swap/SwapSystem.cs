@@ -24,6 +24,8 @@ public class SwapSystem : MonoBehaviour
     private int currentLayer;
     private Color currentColor;
 
+    private int platformIndex = 0;
+
 
     // Start is called before the first frame update
     void Start()
@@ -156,5 +158,20 @@ public class SwapSystem : MonoBehaviour
         SwapEnv(playerRen.material.color);
         yield return new WaitForSeconds(swapDelay);
         canSwap = !canSwap;
+    }
+
+    public void SetObjectsLocation(Vector3 platformLocation)
+    {
+        if (platformIndex >= envOfColorY.Count) { platformIndex = 0; }
+
+        float sizeX = envOfColorX[platformIndex].GetComponent<Collider>().bounds.size.x / 2;
+        float sizeY = envOfColorX[platformIndex].GetComponent<Collider>().bounds.size.y / 2;
+
+        int randomX = (int)Random.Range(-10 + sizeX, 10 - sizeX + 1) / 2;
+
+        envOfColorX[platformIndex].transform.position = platformLocation + new Vector3(randomX, sizeY, 0);
+        envOfColorY[platformIndex].transform.position = platformLocation + new Vector3(-randomX, sizeY, 0);
+
+        platformIndex++;
     }
 }

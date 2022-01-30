@@ -11,9 +11,7 @@ public class LevelGenerator : MonoBehaviour
 
     private float maxGameSpeed = 10;
     [Range(1f, 10f)]
-    public float removeGameSpeed;
-    public float addGameSpeed;
-    private int Count = 0;
+    public float gameSpeed;
 
     public GameObject level;
     private Queue<GameObject> platformsToRemove = new Queue<GameObject>();
@@ -22,12 +20,16 @@ public class LevelGenerator : MonoBehaviour
 
     private Vector3 prevPlatformCoord = Vector3.zero, currentPlatformCoord = Vector3.zero, nextPlatformCoord = Vector3.zero;
 
-    private const int STARTPLATFORMS = 10;
+    private const int STARTPLATFORMS = 8;
     private int platformUntilTurnCount = 0;
     private bool zDirection = true, platformSizeChanged = false, goingNegative = false, turnLeftPlatform = false, turnRightPlatform = false;
 
+    private SwapSystem swapSystem;
+
     private void Awake()
     {
+        swapSystem = FindObjectOfType<SwapSystem>();
+
         prevPlatformSize = platformSize;
 
         // spawn STARTPLATFORMS amount of platforms before the game starts
@@ -38,7 +40,10 @@ public class LevelGenerator : MonoBehaviour
             if (i == 0)
                 GetNewCoords(currentPlatformCoord, true);
             else
+            {
                 GetNewCoords(currentPlatformCoord);
+                swapSystem.SetObjectsLocation(currentPlatformCoord);
+            }
         }
 
         // When done start Coroutine
@@ -50,7 +55,9 @@ public class LevelGenerator : MonoBehaviour
     {
         CreateMesh(currentPlatformCoord);
 
-        yield return new WaitForSeconds(maxGameSpeed - addGameSpeed);
+        swapSystem.SetObjectsLocation(currentPlatformCoord);
+
+        yield return new WaitForSeconds(maxGameSpeed - gameSpeed);
 
         turnLeftPlatform = turnRightPlatform = false;
 
@@ -116,33 +123,18 @@ public class LevelGenerator : MonoBehaviour
 
         if (turnLeftPlatform)
         {
-            GameObject boxColliderObject = new GameObject("TurnLeftColliderObject");
-            boxColliderObject.transform.position = prevPlatformCoord;
-            boxColliderObject.transform.rotation = Quaternion.Euler(previousPlatform.transform.rotation.x, -45, previousPlatform.transform.rotation.x);
-            boxColliderObject.transform.parent = previousPlatform.transform;
-            boxColliderObject.AddComponent<BoxCollider>().isTrigger = true;
-            boxColliderObject.GetComponent<BoxCollider>().size = new Vector3(SquareRootOfPlatformSize(), 5f, 1f);
-            boxColliderObject.tag = "TurnLeftPlatform";
+            previousPlatform.AddComponent<SphereCollider>().isTrigger = true;
+            previousPlatform.tag = "TurnLeftPlatform";
         }
         else if (turnRightPlatform)
         {
-            GameObject boxColliderObject = new GameObject("TurnRightColliderObject");
-            boxColliderObject.transform.position = prevPlatformCoord;
-            boxColliderObject.transform.rotation = Quaternion.Euler(previousPlatform.transform.rotation.x, 45, previousPlatform.transform.rotation.x);
-            boxColliderObject.transform.parent = previousPlatform.transform;
-            boxColliderObject.AddComponent<BoxCollider>().isTrigger = true;
-            boxColliderObject.GetComponent<BoxCollider>().size = new Vector3(SquareRootOfPlatformSize(), 5f, 1f); 
-            boxColliderObject.tag = "TurnRightPlatform";
+            previousPlatform.AddComponent<SphereCollider>().isTrigger = true;
+            previousPlatform.tag = "TurnRightPlatform";
         }
 
         previousPlatform = platform;
 
         platformsToRemove.Enqueue(platform);
-    }
-
-    private float SquareRootOfPlatformSize()
-    {
-        return Mathf.Sqrt(platformSize * platformSize + platformSize * platformSize);
     }
 
     public void GetNewCoords(Vector3 middlePoint, bool firstPlatform = false)
@@ -156,76 +148,66 @@ public class LevelGenerator : MonoBehaviour
 
             // any value different than the base 10 needs a change
             // (new number - 10 (base number)) / 2 = -z value
-        }            
+        }
 
         if (platformUntilTurnCount < STARTPLATFORMS)
             platformUntilTurnCount++;
 
-      /*  if (platformUntilTurnCount >= STARTPLATFORMS)
-        {
-            Count++;
-            // We can turn now
-            if (Random.Range(1, 3) == 1 && !platformSizeChanged) // 1 in 6 chance to turn
-            {
-                if (zDirection) // Swapping to X direction
-                {
-                    if (Random.Range(1, 3) == 1) // Left turn (negative)
-                    {
-                        nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
-                        goingNegative = true;
-                        turnLeftPlatform = true;
-                        Debug.Log("z left" + Count + " trunleft "+  turnLeftPlatform + " turnright" + turnRightPlatform);
-                    }
-                    else // Right turn (positive)
-                    {
-                        nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
-                        goingNegative = false;
-                        turnRightPlatform = true;
-                        Debug.Log("z right" + Count + " trunleft " + turnLeftPlatform + " turnright" + turnRightPlatform);
-                    }
-                   
-                    zDirection = false;
-                }
-                else // Swapping to Z direction
-                { 
-                    //hier werkt iets niet het is niet de plus en min om draaien
-                    if (Random.Range(1, 3) == 1) // Left turn (negative)
-                    {
-                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
-                        goingNegative = true;
-                        turnLeftPlatform = true;
-                        Debug.Log("not z left" + Count + " trunleft " + turnLeftPlatform + " turnright" + turnRightPlatform);
-                    }
-                    else // Right turn (positive)
-                    {
-                        nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
-                        goingNegative = false;
-                        turnRightPlatform = true;
-                        Debug.Log("not z right" + Count  + " trunleft "+  turnLeftPlatform + " turnright" + turnRightPlatform);
-                    }
-                    
-                    zDirection = true;
-                }
-                platformUntilTurnCount = 0;
-            }
-            else if (platformSizeChanged)
-            {
-                if (zDirection && goingNegative) // moving z-axis to negative
-                    nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
-                else if (zDirection && !goingNegative)
-                    nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
-                else if (!zDirection && goingNegative)
-                    nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
-                else if (!zDirection && !goingNegative)
-                    nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
+        // if (platformUntilTurnCount >= STARTPLATFORMS)
+        // {
+        //     // We can turn now
+        //     if (Random.Range(1, 11) == 1 && !platformSizeChanged) // 1 in 10 chance to turn
+        //     {
+        //         if (zDirection) // Swapping to X direction
+        //         {
+        //             if (Random.Range(1, 3) == 1) // Left turn (negative)
+        //             {
+        //                 nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
+        //                 goingNegative = true;
+        //                 turnLeftPlatform = true;
+        //             }
+        //             else // Right turn (positive)
+        //             {
+        //                 nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
+        //                 goingNegative = false;
+        //                 turnRightPlatform = true;
+        //             }
+        //             zDirection = false;
+        //         }
+        //         else // Swapping to Z direction
+        //         {
+        //             if (Random.Range(1, 3) == 1) // Left turn (negative)
+        //             {
+        //                 nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
+        //                 goingNegative = true;
+        //             }
+        //             else // Right turn (positive)
+        //             {
+        //                 nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
+        //                 goingNegative = false;
+        //             }
+        //             zDirection = true;
+        //         }
+        //         platformUntilTurnCount = 0;
+        //     }
+        //     else if (platformSizeChanged)
+        //     {
+        //         if (zDirection && goingNegative) // moving z-axis to negative
+        //             nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
+        //         else if (zDirection && !goingNegative)
+        //             nextPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z + platformSize);
+        //         else if (!zDirection && goingNegative)
+        //             nextPlatformCoord = new Vector3(middlePoint.x - platformSize, middlePoint.y, middlePoint.z);
+        //         else if (!zDirection && !goingNegative)
+        //             nextPlatformCoord = new Vector3(middlePoint.x + platformSize, middlePoint.y, middlePoint.z);
 
-                platformSizeChanged = false;
-            }
-            else
-                nextPlatformCoord = currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord);
-        }*/
-       /* if // dont turn yet
-        {*/
+        //         platformSizeChanged = false;
+        //     }
+        //     else
+        //         nextPlatformCoord = currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord);
+        // }
+        // else // dont turn yet
+        // {
             if (firstPlatform)
             {
                 prevPlatformCoord = new Vector3(middlePoint.x, middlePoint.y, middlePoint.z - platformSize);
@@ -247,7 +229,7 @@ public class LevelGenerator : MonoBehaviour
             }
             else
                 nextPlatformCoord = currentPlatformCoord + (currentPlatformCoord - prevPlatformCoord);
-      //  }
+        // }
 
         prevPlatformCoord = currentPlatformCoord;
         currentPlatformCoord = nextPlatformCoord;
@@ -255,7 +237,7 @@ public class LevelGenerator : MonoBehaviour
 
     private IEnumerator RemovePlatform()
     {
-        yield return new WaitForSeconds(maxGameSpeed - removeGameSpeed);
+        yield return new WaitForSeconds(maxGameSpeed - gameSpeed);
 
         Destroy(platformsToRemove.Dequeue());
 
